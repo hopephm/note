@@ -1,0 +1,27 @@
+- Gradle Project 기본 구조
+	
+	|- gradle
+	|	|----- wrapper
+	|			|----- gradle-wraper.jar
+	|			|----- gradle-wrapper.propertiess
+	|- gradlew
+	|- gradlew.bat
+
+
+	<역할>
+		gradlew 	: Linux, macOS용 셸 스크립트
+		gradle.bat 	: Windows용 배치 스크립트
+
+		gradle-wrapper.jar			: Wrapper jar
+		gradle-wrapper.properties 	: Gradle 설정정보 프로퍼티
+
+
+- Gradle Wrapper
+	>> 프로젝트 첫 설정 시, 그레이들 관련 빌드를 자동 설정
+	>> 그레이들로 구성된 프로젝트의 버전관리 용이
+
+	* gradelw 활용 동적 관리 가능
+	* gradle wrapper를 설치하여 버전관리 시스템 활용 프로젝트 관리 가능
+
+	※ Ex) 	./gradlew wrapper --gradle-version 4.8.1	
+				>> gradle 버전을 4.8.1로 변경

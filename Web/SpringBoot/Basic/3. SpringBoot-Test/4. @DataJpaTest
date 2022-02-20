@@ -1,0 +1,71 @@
+- @DataJpaTest
+	: JPA관련 설정만 로드하여 테스팅
+		* @Entity 클래스 스캔 후 JPA Repository 구성
+
+
+	[예제]
+
+	// @DataJpaTest는 임베디드 메모리 DB를 통해 테스트 함
+	@DataJpaTest
+
+	// 자동 롤백을 비활성화 하고 싶다면
+	//@Rollback(false)
+	// 사용자가 원하는 DataSource를 선택하여 사용하고 싶다면 아래 구문을 추가
+	//@ActiveProfiles("...profile env values...")
+	//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+	public class BookDataJpaTest {
+	    private static String BOOT_TEST_TITLE = "Spring Boot Test Book";
+
+	    @Autowired
+	    private TestEntityManager testEntityManager;
+
+	    @Autowired
+	    private BookRepository bookRepository;
+
+	    private Book book1, book2, book3;
+
+	    @BeforeEach
+	    public void bookSaveTest(){
+	        book1 = Book.builder().title(BOOT_TEST_TITLE).publishedAt(LocalDateTime.now()).build();
+	        testEntityManager.persist(book1);
+
+	        book2 = Book.builder().title(BOOT_TEST_TITLE+"2").publishedAt(LocalDateTime.now()).build();
+	        testEntityManager.persist(book2);
+
+	        book3 = Book.builder().title(BOOT_TEST_TITLE+"3").publishedAt(LocalDateTime.now()).build();
+	        testEntityManager.persist(book3);
+	    }
+
+	    @Test
+	    public void SearchTest(){
+	        List<Book> bookList = bookRepository.findAll();
+	        MatcherAssert.assertThat(bookList, Matchers.hasSize(3));
+	        MatcherAssert.assertThat(bookList, Matchers.contains(book1,book2,book3));
+	    }
+
+	    @Test
+	    public void findByTitleTest(){
+	        List<Book> bookList = bookRepository.findByTitle(BOOT_TEST_TITLE+"1");
+	        MatcherAssert.assertThat(bookList, Matchers.contains(book1));
+	    }
+
+	    @Test
+	    public void findByIncludedFindAll(){
+	        List<Book> bookList = bookRepository.findByIncludedStr("Book1");
+	        MatcherAssert.assertThat(bookList, Matchers.is(book1));
+	    }
+
+	    @Test
+	    public void BookSaveAndDeleteTest(){
+	        bookRepository.deleteAll();
+	        MatcherAssert.assertThat(bookRepository.findAll(), IsEmptyCollection.empty());
+	    }
+	}
+
+	* 테스트에 필요한 설정 이외의 부분에서 AutoConfigure 관련 이슈가 생길 수 있으니 범위를 제한하는 것이 좋다
+
+	* DB설정과 관련된 Configuration은 직접 설정하지 않고 스프링 부트에서  @SpringBootApplication, @EnableAutoConfiguration을 통해 property만으로 Auto Configuration을 활용할 수 있으므로 꼭 알아두자.
+	
+	* AutoConfiguration과 사용자 설정 Configuration을 함께 활용하기 위해서는 @SpringBootApplication 이나, @EnableAutoConfiguration과 함께 @ComponentScan(basepackages="...")을 통해 베이스 패키지를 명시하여 컴포넌트를 탐색하도록 하자!
+
+	*https://kangwoojin.github.io/programing/auto-configure-test-database/

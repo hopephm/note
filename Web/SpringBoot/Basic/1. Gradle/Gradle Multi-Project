@@ -1,0 +1,57 @@
+여러 프로젝트를 하나의 통합 프로젝트 처럼 사용
+	>> 프로젝트 재사용성 향상
+
+	<방법>
+	>> setting.gradle 수정
+		{
+			rootProject.name = 'demo'
+			include 'demo-web'
+			include 'demo-domain'
+		}
+
+	>> 프로젝트 구조 수정
+		.
+		.
+		|- demo-web
+		|	|
+		|	|- src
+		|	|	|----- main
+		|	|	|	 	|----- java
+		|	|	|		|		|----- com
+		|	|	|		|				|----- demo
+		|	|	|		|
+		|	|	|		|----- resources
+		|	|	|				|----- static
+		|	|	|				|----- templates
+		|	|	|
+		|	|	|----- test
+		|	|		 	|----- java
+		|	|					|----- com
+		|	|							|----- demo
+		|	|
+		|	|----- build.gradle
+		|
+		|
+		|- demo-domain
+		|	...
+		|	 |----- build.gradle
+		.
+		.
+
+
+	* 참고: https://docs.gradle.org/current/userguide/multi_project_builds.html
+
+
+
+
+	※ intellij 에서 통합 프로젝트..
+		 그냥 단순히 전체 프로젝트 root 경로에서
+
+		 	new -> module -> gradle(java) -> 이름설정
+
+		 하면 통합 프로젝트로 하위 프로젝트 생성 완료
+
+
+
+
+	

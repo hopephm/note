@@ -1,0 +1,14 @@
+@Repository : 해당 클래스를 repository로 사용
+	- extends JpaRepository<ClassName, PkType>
+		: 해당 interface를 PkType을 pkType으로 하는 ClassName에 대한 repository로 사용
+
+	- 기본적인 기능 제공
+		>> findByPk, findAll ...
+		>> deleteByPk, deleteAll ... 
+
+	- Attr 이름과 findBy... countBy... 을 통해 관습적으로 써온 표현을 통해 구체적 작성 없이 사용 가능 
+	   * Ex) List<Book> findByTitle(String str);
+
+	- 쿼리문을 직접 정의하여 사용 가능
+		* Ex) @Query("select b from Book b where b.title like %:str%")
+	   			List<Book> findByIncludedStr(@Param("str") String str);

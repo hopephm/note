@@ -1,0 +1,36 @@
+#wrap{
+	width: 800px;
+	margin: 0 auto;
+	text-align: center;
+	border: dashed 1px black;
+}
+
+.box{
+	background-color: #ffffbb;
+	border: solid 1px #9999bb;
+	width:200px;
+	height: 200px;
+	font-size: 20px;
+}
+
+#box1{
+	position: relative;
+	top: 20px;
+	left: 20px;
+	background-color: red;
+}
+
+#box2{
+	position: absolute;
+	right: 20px;
+	top: 100px;
+	background-color: blue;
+}
+
+#box3{
+	position: fixed;
+	left: 20px;
+	bottom: 20px;
+
+	background-color: green;
+}

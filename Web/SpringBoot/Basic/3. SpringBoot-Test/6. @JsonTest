@@ -1,0 +1,35 @@
+- @JsonTest
+	: json관련 파싱 테스트 
+
+	[예제]
+
+
+	< BookJsonTest Class >
+
+	@JsonTest
+	public class BookJsonTest {
+	    @Autowired
+	    private JacksonTester<Book> json;
+
+	    @Test
+	    public void jsonTest() throws Exception{
+	        Book book = Book.builder().title("테스트").build();
+
+	        String content = "{\"title\":\"테스트\"}";
+
+	        Assertions.assertThat(this.json.parseObject(content).getTitle()).isEqualTo(book.getTitle());
+	        Assertions.assertThat(this.json.parseObject(content).getPublishedAt()).isNull();
+	        Assertions.assertThat(this.json.write(book)).isEqualToJson("/json/test.json");
+	        Assertions.assertThat(this.json.write(book)).hasJsonPathStringValue("title");
+	        Assertions.assertThat(this.json.write(book)).extractingJsonPathStringValue("title").isEqualTo("테스트");
+	    }
+	}
+
+
+	< resources/json/test.json >
+	
+	{
+	  "idx": null,
+	  "title": "테스트",
+	  "publishedAt": null
+	}

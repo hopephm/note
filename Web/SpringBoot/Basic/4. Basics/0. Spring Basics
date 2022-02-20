@@ -1,0 +1,29 @@
+- Spring Triangle
+	>> POJO: 기본 객체(용도별 이름을 지정한 getter, setter가 존재하는 데이터 성격의 가장 기본 객체)
+
+	>> DI: 의존성을 코드 내부에서 정의하는 것이 아닌 외부에서 주입하겠다는 의미(코드와의 독립성, 확장성)
+
+		* spring에서는 의존성으로 관리할 객체를 Bean으로 등록하고 스프링 내부에 존재하는 container가 이를 관리
+
+		* 기본적으로 싱글톤 형식이며, 주입가능한 Bean이 여러개 존재할 경우 명시하여야 함
+
+
+	>> AOP: 관점 지향 프로그래밍, 병렬 프로그래밍, 각 객체별 비슷한 코드에서 공통부분을 따로 떼어내어 확장성 있게 사용가능하게 함
+		* 스프링에서는 aop구현을 위한 어노테이션 제공
+
+	>> PSA: 서비스 추상화, 실제 내부 기술과는 별개로 추상화를 통해 서비스가 확장성 있게 동작하도록 함
+
+
+
+
+※ Bean 등록 방법
+	- application_context.xml
+	- configuration + applicationcontext
+	- configuration + componentscan
+
+	* 참고: https://atoz-develop.tistory.com/entry/Spring-%EB%B9%88%EC%9D%84-%EC%84%A4%EC%A0%95%ED%95%98%EB%8A%94-3%EA%B0%80%EC%A7%80-%EB%B0%A9%EB%B2%95-XML-JAVA-Component-Scan
+
+
+※ Spring Boot 에서는 @SpringBootApplication 밑에 ComponentScan(basepacakges = "...") 을 통해 베이스 패키지를 명시해주어야 AutoConfiguration과 사용자 설정 Configuration을 함께 탐색하여 사용할 수 있다.
+
+	

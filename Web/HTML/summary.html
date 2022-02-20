@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Summary</title>
+		<style>
+			h1{
+				color: blue;
+			}
+		</style>
+	</head>
+
+
+	<body>
+		<h1>기본</h1>
+			<h2>강조표시 h2</h2>
+			<h3>강조표시 h3</h3>
+			<h4>강조표시 h4</h4>
+			<h5>강조표시 h5</h5>
+			<h6>강조표시 h6</h6>
+			<p>단락 p</p>
+			줄바꿈 br <br>
+
+
+
+		<br><br><br>
+		<h1>특수문자</h1>
+			This is &ampnbsp : &nbsp<br>
+			This is &amplt, &ampgt : &lt, &gt<br>
+			This is &ampquot : &quot<br>
+			This is &amp#039 : &#039<br>
+			This is &ampamp : &amp<br>
+			This is &ampcopy : &copy<br>
+
+
+
+		<br><br><br>
+		<h1>목록</h1>
+			<p>순서없는 목록 ul</p>
+			<ul>
+				<li>순서없는 요소</li>
+				<li>순서없는 요소</li>
+			</ul>
+
+			<p>순서없는 목록 ol</p>
+			<ol>
+				<li>순서있는 요소</li>
+				<li>순서있는 요소</li>
+			</ol>
+
+
+
+		<br><br><br>
+		<h1>테이블</h1>
+			<table border=1>
+				<tr><th>0,0 head 칸</th><th>0,1 head 칸</th><th>0,2 head 칸</th></tr>
+				<tr><td>1,0 body 칸</td><td>1,1 body 칸</td><td>1,2 body 칸</td></tr>
+				<tr><td>2,0 body 칸</td><td>2,1 body 칸</td><td>2,2 body 칸</td></tr>
+				<tr><td>3,0 body 칸</td><td>3,1 body 칸</td><td>3,2 body 칸</td></tr>
+			</table><br>
+
+			<table border=1>
+				<tr><th colspan=3>3개 짜리 head 칸</th></tr>
+				<tr><td rowspan=3>3개 짜리 body 칸</td><td>1,1 body 칸</td><td>1,2 body 칸</td></tr>
+				<tr>									<td>2,1 body 칸</td><td>2,2 body 칸</td></tr>
+				<tr>									<td>3,1 body 칸</td><td>3,2 body 칸</td></tr>
+			</table>
+
+
+
+		<br><br><br>
+		<h1>하이퍼링크</h1>
+		<p><a href="https://www.naver.com"><h2>링크 이동</h2></a><p>
+		<p><a href="./srcs/test.png"><h2>로컬 이미지 이동</h2></a><p>
+		<p><a href="./srcs/test.mp3"><h2>로컬 오디오 이동</h2></a><p>
+		<p><a href="./srcs/test.mp4"><h2>로컬 비디오 이동</h2></a><p>
+
+
+
+		<br><br><br>
+		<h1>이미지, 오디오, 비디오</h1>
+
+		<h2>이미지</h2>
+		<a href="https://www.naver.com">
+			<img src="./srcs/test.png" width="200" height="200" title="클릭하면 네이버 홈화면으로 가자"/>
+		</a>
+
+		<h2>오디오</h2>
+		<audio controls autoplay loop>
+			<source src="./srcs/test.mp3" type="audio/mpeg">
+		</audio>
+		<p>     * autoplay 는 크롬에서는 제한하는 속성</p>
+	
+		<h2>비디오</h2>
+		<video width="200" height="200" controls autoplay loop>
+			<source src="./srcs/test.mp4" type="video/mp4">
+		</video>
+		<p>     * autoplay 는 크롬에서는 제한하는 속성</p>
+
+
+
+		<br><br><br>
+		<h1>폼 양식</h1>
+
+		<h2>input</h2>
+		<form action="test.php">
+			text
+			<input type="text">
+			<br>
+
+			password
+			<input type="password">
+			<br>
+
+			radio
+			<input type="radio" name="tf">예<input type="radio" name="tf">아니오
+			<br>
+
+			checkbox
+			<input type="checkbox" name="cb" checked>항목1
+			<input type="checkbox" name="cb">항목2
+			<input type="checkbox" name="cb">항목3
+			<input type="checkbox" name="cb">항목4
+			<input type="checkbox" name="cb">항목5
+			<br>
+
+			file
+			<input type="file">
+			<br>
+
+			button1(submit)
+			<input type="submit" value="action수행+이동">
+			<br>
+
+			button2(button)
+			<input type="button" value="action수행">
+			<br>
+
+			button3(reset)
+			<input type="reset" value="해당 Form 초기화">
+			<br>
+		</form>
+
+		<br>
+		<h2>input 속성</h2>
+		<form>
+			value=쓰고싶은 말?<input type="text" value="쓰고싶은 말?"><br>
+			readonly, value=여긴 글 못써<input type="text" value="여긴 글 못써" readonly><br>
+			disables, value=이건 아예 못 건드려<input type="text" value="이건 아예 못 건드려" disabled><br>
+			placeholer=입력 예시<input type="text" placeholder="입력 예시"><br>
+			autofocus<input type="text" autofocus><br>
+		</form>
+
+		<br>
+		<h2>select option</h2>
+		<form>
+			<select>
+				<option>항목1</option>
+				<option>항목2</option>
+				<option>항목3</option>
+				<option>항목4</option>
+			</select>
+		</form>
+
+		<br>
+		<h2>textarea</h2>
+		<form>
+			<textarea rows="3" cols="20">
+				쓰고 싶은 말?
+			</textarea>
+		</form>
+	</body>
+</html>

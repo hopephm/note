@@ -1,0 +1,189 @@
+[OAuth2 인증 성공 후]
+	 Session에 유저 정보 저장 및 호출 과정
+
+
+	** 단순 로직 ** 
+
+	@GetMapping(value="/{facebook/google/kakako}/complete")	 
+	public String loginComplete(HttpSession session){
+		OAuth2Authentication authentication = 
+			(OAuth2Authentication)SecurityContextHolder.getContext().getAuthentication();
+		Map<String, String> map = 
+			(HashMap<String, String>)authentication.getUserAuthentication().getDetails();
+
+		session.setAttribute(
+			"user", 
+				User.builder()
+				.name(map.get("name"))
+				.email(map.get("email"))
+				.principal(map.get("id"))
+				.socialType(SocialType.FACEBOOK)
+				.createdDate(LocalDateTime.now())
+				.build()
+			)
+
+		return "redirect:/board/list";
+	}
+
+
+	< 문제점 >
+		- 로직이 Controller에 존재
+		- SocialType이 페이스북 일때만 가능
+
+	>> 로직을 Controller 바깥으로 빼고, AOP를 적용하여 SocialType에 따라 동작을 다르게 하도록 함
+	>> spring에서 제공하는 HandlerMtehodArgumentResolver 활용
+		* 직접 구현하는 것보다 쉬움
+		* 컨트롤러 메서드 에서 특정조건에 해당하는 파라미터 존재시, 로직 처리 후 파라미터에 바인딩
+			- 이미 많이쓰고 있음 (Model, Principal, HttpSession 등등...)
+			- 해당 리졸버가  동작하도록 등록해야 함
+
+			public interface HandlerMethodArgumentResolver{
+				// 어떤 파라미터를 지원할 것인지에 대한 정의
+				boolean supportsParameter(MethodParamether parameterr);
+
+				// 제공된 정보를 토대로 지원 파라미터에 대한 값을 바인딩
+				Object resolveArgument(
+					MethodParameter parameter,
+					ModelAndViewContainer mavContainer,
+					NativeWebRequest webRequest,
+					WebDataBinderFactory binderFactory
+				) throws Exception;
+			}
+
+
+
+
+	** 개선 ** 
+
+	1) Controller
+		@GetMapping(value = "/{facebook|google|kakao}/complete")
+	    public String loginComplete(@SocialUser User user) {
+	        return "redirect:/board/list";
+	    }
+
+	    >> 해당 path로 들어오면, 해당 세션에 인증된 User를 등록
+	    	- 사실 어노테이션 이름으로 뭐하는 애인지 잘 모르겠어서 어노테이션 이름 변경도 괜찮을 듯
+
+    2) SocailUer Annotation
+    	@Target(ElementType.PARAMETER)
+		@Retention(RetentionPolicy.RUNTIME)
+		public @interface SocialUser {
+		}
+
+		>> 런타임까지 유지되는 파라미터 대상 어노테이션 선언
+
+	3) UserArgumentResolver 등록
+		@SpringBootApplication
+		public class BootWebApplication extends WebMvcConfigurerAdapter {
+			@Autowired
+			private UserArgumentResolver userArgumentResolver;
+
+			@Override
+			public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+				argumentResolvers.add(userArgumentResolver);
+			}
+		...
+
+		>> 현 app에서 동작하도로 resolver를 등록
+			- WebMvcConfigurerAdapter 상속하여 Override를 통해 등록
+
+
+	4) UserArgumentResolver 구현
+
+	@Component
+	public class UserArgumentResolver implements HandlerMethodArgumentResolver {
+
+		@Autowired
+	    private UserRepository userRepository;
+
+	    // Parameter가 @SocialUser Annotation을 갖고있고, Parameter Type이 User일 때 적용 되는 Resolver
+	    @Override
+	    public boolean supportsParameter(MethodParameter parameter) {
+	        return parameter.getParameterAnnotation(SocialUser.class) != null && parameter.getParameterType().equals(User.class);
+	    }
+
+	    // Parameter에 바인딩 될 User객체에 대한로직 선언
+	    @Override
+	    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+	        HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+	        User user = (User) session.getAttribute("user");
+	        return getUser(user, session);
+	    }
+
+	    // session에서 User정보를 등록
+	    private User getUser(User user, HttpSession session) {
+	        if(user == null) {
+	            try {
+	            	// securityContext에서 인증정보를 가져옴
+	                OAuth2Authentication authentication = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+	                Map<String, String> map = (HashMap<String, String>) authentication.getUserAuthentication().getDetails();
+
+	                // 인증 미디어 타입에 따른 User객체 생성
+	                User convertUser = convertUser(String.valueOf(authentication.getAuthorities().toArray()[0]), map);
+
+	                // 처음 Social을 통해 로그인한 유저라면, repo에 저장
+	                user = userRepository.findByEmail(convertUser.getEmail());
+	                if (user == null) { user = userRepository.save(convertUser); }
+
+	                // 인증정보에 권한관련 정보가 없을경우, 권한을 설정해줌
+	                setRoleIfNotSame(user, authentication, map);
+
+	                // 세션에 해당 유저 저장
+	                session.setAttribute("user", user);
+	            } catch (ClassCastException e) {
+	                return user;
+	            }
+	        }
+	        return user;
+	    }
+
+	    // 카카오는 키 네이밍이 달라 별도 함수로 호출
+	    private User convertUser(String authority, Map<String, String> map) {
+	        if(FACEBOOK.isEquals(authority)) return getModernUser(FACEBOOK, map);
+	        else if(GOOGLE.isEquals(authority)) return getModernUser(GOOGLE, map);
+	        else if(KAKAO.isEquals(authority)) return getKaKaoUser(map);
+	        return null;
+	    }
+
+	    private User getModernUser(SocialType socialType, Map<String, String> map) {
+	        return User.builder()
+	                .name(map.get("name"))
+	                .email(map.get("email"))
+	                .principal(map.get("id"))
+	                .socialType(socialType)
+	                .createdDate(LocalDateTime.now())
+	                .build();
+	    }
+
+	    private User getKaKaoUser(Map<String, String> map) {
+	        HashMap<String, String> propertyMap = (HashMap<String, String>)(Object) map.get("properties");
+	        return User.builder()
+	                .name(propertyMap.get("nickname"))
+	                .email(map.get("kaccount_email"))
+	                .principal(String.valueOf(map.get("id")))
+	                .socialType(KAKAO)
+	                .createdDate(LocalDateTime.now())
+	                .build();
+	    }
+
+
+	    private void setRoleIfNotSame(User user, OAuth2Authentication authentication, Map<String, String> map) {
+	        if(!authentication.getAuthorities().contains(new SimpleGrantedAuthority(user.getSocialType().getRoleType()))) {
+	            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(map, "N/A", AuthorityUtils.createAuthorityList(user.getSocialType().getRoleType())));
+	        }
+	    }
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

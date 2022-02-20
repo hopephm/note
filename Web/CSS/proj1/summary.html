@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="./css/summary.css">
+
+		<!-- web font -->
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Potta+One&display=swap" rel="stylesheet">
+
+		<style>
+			h3{
+				color: #999999;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!-- css 정의 -->
+		<div id="defcss">
+			<h1> css 정의 </h1>
+
+			<h2>css file을 통한 색상 변경</h2>
+			<h3>head의 style 태그에 의한 색상 변경</h3>
+			<h4 style="color:red;">style 속성에 의한 색상 변경</h4>
+
+			<br><br><br>
+		</div>
+
+		<!-- selector  -->
+		<div id="selector">
+			<h1>selector</h1>
+
+			<ul class="list_class_1">
+				<li> 요소 1 </li>
+				<li> 요소 2 </li>
+				<li> 요소 3 </li>
+			</ul>
+
+			<ul class="list_class_2">
+				<li> 요소 1 </li>
+				<li> 요소 2 </li>
+				<li> 요소 3 </li>
+			</ul>
+
+			<br><br><br>
+		</div>
+
+		<!-- css 기본 문법 -->
+		<div id="css_basics">
+			<h1>css basics</h1>
+
+			<!-- 색상 -->
+			<div id="color">
+				<p class="title2">Color Section</p>
+				<p id="c">this is color</p>
+				<br><br>
+			</div>
+
+
+			<!-- 글자 스타일 -->
+			<div id="text_style">
+				<p class="title2">text_style Section</p>
+
+				<p id="ta_l">text-align: left</p>
+				<p id="ta_c">text-align: center</p>
+				<p id="ta_r">text-align: right</p>
+
+				<p id="lh_100">
+					line-height:<br>
+					100
+				</p>
+				<p id="lh_200">
+					line-height:<br>
+					200
+				</p>
+
+				<p id="ff_A">font-family: "Arial"</p>
+				<p id="ff_S">font-family: "Serif"</p>
+
+				<p id="fs_10">font-size: 10px</p>
+				<p id="fs_20">font-size: 20px</p>
+
+				<p id="fw_b">font-weight: bold</p>
+				<p id="fw_n">font-weight: normal</p>
+
+				<p id="fs_i">font-style: italic</p>
+
+				<p id="td_u">text-decoration: underline</p>
+				<p id="td_n">text-decoration: none</p>
+
+				<p id="ts">text-shadow: 3px 3px 5px #444444</p>
+
+				<a id="hrefcss" href="https://www.google.com">Go to google</a>
+
+				<p id="wff_Po_c">font-family: "Potta One", "cursive"; (web font)</p>
+				<br><br>
+			</div>
+
+
+			<!-- 박스 모델 -->
+			<div id="box_model">
+				<p class="title2">Box model Section</p>
+
+				<div class="cover">
+					<div id="box1">
+						<p class="content">
+							margin-top: 5px;<br>
+							margin-bottom: 15px;<br>
+							margin-right: 10px<br>
+							margin-left: 20px<br>
+
+							padding-top: 20px;<br>
+							padding-bottom: 10px;<br>
+							padding-right: 5px<br>
+							padding-left: 15px<br>
+
+							border-top: solid 1px red;<br>
+							border-bottom: dotted 3px blue;<br>
+							border-right: dashed 2px green;<br>
+							border-left: dashed 4px yellow;<br>
+
+							border-radius: 20px;<br>
+							box-shadow: 5px 5px 10px #999999;<br>
+						</p>
+					</div>
+				</div>
+
+				<br><br>
+			</div>
+
+			<br><br><br>
+		</div>
+
+
+		<div id="tips">
+			<h1>Tips</h1>
+
+			<div id="background_img">
+				<p class="title2"> background Image </p>
+				<p>
+					width: 1000px;<br>
+					height: 1000px;<br>
+					background-image: url(../srcs/test.png)<br>
+					background-repeat: repeat-x repeat-y;<br>
+					background-posigion: center center;
+				</p>
+			</div>
+
+			<div id="table_control">
+				<p class="title2"> table </p>
+
+				<table id="table" border=1>
+					<tr><th>border-collapse</th><th>collapse</th></tr>
+					<tr><td>width: 400px</td><td>height: 200px</td></tr>
+					<tr><td>padding:1px</td><td>margin:1px</td></tr>
+				</table>
+			</div>
+
+			<div id="list_control">
+				<p class="title2"> list </p>
+
+				<ul id="list1">
+					<li>list-style-type: square</li>
+					<li>list-style-type: square</li>
+					<li>list-style-type: square</li>
+				</ul>
+
+				<ul id="list2">
+					<li>list-style-type: circle</li>
+					<li>list-style-type: circle</li>
+					<li>list-style-type: circle</li>
+				</ul>
+
+				<ul id="list3">
+					<li>list-style-type: disc</li>
+					<li>list-style-type: disc</li>
+					<li>list-style-type: disc</li>
+				</ul>
+
+				<ul id="list4">
+					<li>list-style-type: none</li>
+					<li>list-style-type: none</li>
+					<li>list-style-type: none</li>
+				</ul>
+
+				<ul id="list5">
+					<li>list-style-image: url("https://mdn.mozillademos.org/files/11981/starsolid.gif")</li>
+					<li>list-style-image: url("https://mdn.mozillademos.org/files/11981/starsolid.gif")</li>
+					<li>list-style-image: url("https://mdn.mozillademos.org/files/11981/starsolid.gif")</li>
+					<li>로컬 파일도 가능</li>
+				</ul>
+
+				<ul id="list6">
+					<li>li {display: inline}</li>
+					<li>li {display: inline}</li>
+					<li>li {display: inline}</li>
+				</ul>
+
+			</div>
+
+			<div id="display">
+				<p class="title2">display</p>
+
+				<div class="box" id="inline">
+					display: inline
+					수평, width, height, padding, margin 안먹음.
+				</div>
+				<div class="box" id="inline">
+					display: inline
+					수평, width, height, padding, margin 안먹음.
+				</div>
+
+				<div class="box" id="block">
+					display: block<br><br>
+					수직, width, height, padding, margin 먹음
+				</div>
+				<div class="box" id="block">
+					display: block<br><br>
+					수직, width, height, padding, margin 먹음
+				</div>
+
+				
+				<div class="box" id="inline_block">
+					display: inline-block<br><br>
+					수평, width, height, padding, margin 먹음
+				</div>
+				<div class="box" id="inline_block">
+					display: inline-block<br><br>
+					수평, width, height, padding, margin 먹음
+				</div>
+
+				<div class="box" id="none">
+					display: none<br>
+					안보이지롱~ㅋㅋ
+				</div>
+				<div class="box" id="none">
+					display: none<br>
+					안보이지롱~ㅋㅋ
+				</div>
+
+				<p>etc...</p>
+				<p>inline: span, a, img, input, textarea, br, buttom, select, option, script ...</p>
+				<p>block: div, p, h1~h6, form, table, ul, ol, li, video, header, footer, section ...</p>
+
+			</div>
+
+			<br><br><br>
+		</div>
+
+	</body>
+
+</html>

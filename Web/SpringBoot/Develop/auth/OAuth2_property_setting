@@ -1,0 +1,101 @@
+
+[스프링 부트 1.5 기준]
+
+소셜 미디어 연동을 위한 프로퍼티 및 Injection
+
+	*** 예시 ***
+
+	--- application.yml ---
+
+	facebook :
+	  client :
+	    clientId : 
+	    clientSecret: 
+	    accessTokenUri: https://graph.facebook.com/oauth/access_token
+	    userAuthorizationUri: https://www.facebook.com/dialog/oauth?display=popup
+	    tokenName: oauth_token
+	    authenticationScheme: query
+	    clientAuthenticationScheme: form
+	    scope: email
+	  resource:
+	    userInfoUri: https://graph.facebook.com/me?fields=id,name,email,link
+
+	google :
+	  client :
+	    clientId : 
+	    clientSecret: 
+	    accessTokenUri: https://accounts.google.com/o/oauth2/token
+	    userAuthorizationUri: https://accounts.google.com/o/oauth2/auth
+	    scope: email, profile
+	  resource:
+	    userInfoUri: https://www.googleapis.com/oauth2/v2/userinfo
+
+	kakao :
+	  client :
+	    clientId :
+	    accessTokenUri: https://kauth.kakao.com/oauth/token
+	    userAuthorizationUri: https://kauth.kakao.com/oauth/authorize
+	  resource:
+	    userInfoUri: https://kapi.kakao.com/v1/user/me
+
+
+	 --- 프로퍼티 POJO ---
+
+	 public class ClientResources {
+	    @NestedConfigurationProperty
+	    private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
+
+	    @NestedConfigurationProperty
+	    private ResourceServerProperties resource = new ResourceServerProperties();
+
+	    public AuthorizationCodeResourceDetails getClient() {
+	        return client;
+	    }
+
+	    public ResourceServerProperties getResource() {
+	        return resource;
+	    }
+
+	}
+
+
+	--- 프로퍼티 Bean 등록 --- 
+
+	@Configuration
+	public class SecurityConfig {
+		@Bean
+	    @ConfigurationProperties("facebook")
+	    public ClientResources facebook() {
+	        return new ClientResources();
+	    }
+
+	    @Bean
+	    @ConfigurationProperties("google")
+	    public ClientResources google() {
+	        return new ClientResources();
+	    }
+
+	    @Bean
+	    @ConfigurationProperties("kakao")
+	    public ClientResources kakao() {
+	        return new ClientResources();
+	    }
+	}
+
+
+	>> 기본 프로퍼티
+		- clientId		: OAuth 클라이언트 public key
+		- clientSecret	: OAuth 클라이언트 Secret Key
+		- accessTokenUri: AccessToken을 제공하는 OAuth URI
+		- userAuthorizationUri	: 인증성공시 redirection URI
+		- scope			: 리소스 접근 범위
+		- userInfoUri	: 유저정보 조회 URI
+
+	>> 프로퍼티 주입
+		- @NestedConfigurationProperty: 해당필드가 단일 값이 아닌 중복 값으로 바인딩 (페이스북, 구글, 카카오)
+		- AuthoriztionCodeResourceDetails: 위 프로퍼티에서 client하위의 키/값 매핑 객체
+		- ResourceServerProperties: 위 프로퍼티에서 client하위의 리소스 값 매핑 객체
+
+
+	※ 소셜별 정보제공 객체는 CommonOAuth2Provider 를 확인(Enum)
+

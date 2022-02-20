@@ -1,0 +1,156 @@
+- Java Persistence API
+	: 자바 ORM(Object Relational Mapping)에 대한 표준 명세
+		* 자바 객체와 관계형 DB 실 데이터 간의 Mapping 지원 기술
+
+
+	>> JPA는 말그대로 ORM을 위한 인터페이스
+		* 특정 기능을 하는 라이브러리가 아님
+
+	>> JPA 사용 -> JDBC API를 통한 SQL 호출 -> DB와의 통신
+		* 개발자가 직접 JDBC를 사용하지 않음
+		* PSA를 위한 기술 중 하나로 생각해도 될 듯
+
+
+- 사용방법
+	[의존성 설정]
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// 상황별 수정
+	runtimeOnly 'com.h2database:h2'
+
+
+
+	[사용 예제]
+
+
+	<Book Class>
+
+	@NoArgsConstructor
+	@Getter
+	@Entity
+	@Table
+	public class Book {
+	    @Id
+	    @GeneratedValue
+	    private Integer idx;
+
+	    @Column
+	    private String title;
+
+	    @Column
+	    private LocalDateTime publishedAt;
+
+	    @Builder
+	    public Book(String title, LocalDateTime publishedAt) {
+	        this.title = title;
+	        this.publishedAt = publishedAt;
+	    }
+	}
+
+
+
+	<BookRepository Class>
+
+	public interface BookRepository extends JpaRepository<Book, Integer> {
+	//    Attr 이름과 findBy... countBy... 을 통해 관습적으로 써온 표현을 통해 구체적 작성 없이 사용 가능 
+	    List<Book> findByTitle(String str);
+
+	//    쿼리문을 직접 정의하여 사용 가능
+	    @Query("select b from Book b where b.title like %:str%")
+	    List<Book> findByIncludedStr(@Param("str") String str);
+	}
+
+
+
+
+	<BookDataJpaTest Class>
+
+	@DataJpaTest
+	public class BookDataJpaTest {
+	    private static String BOOT_TEST_TITLE = "Spring Boot Test Book";
+
+	    @Autowired
+	    private TestEntityManager testEntityManager;
+
+	    @Autowired
+	    private BookRepository bookRepository;
+
+	    private Book book1, book2, book3;
+
+	    @BeforeEach
+	    public void bookSaveTest(){
+	        book1 = Book.builder().title(BOOT_TEST_TITLE).publishedAt(LocalDateTime.now()).build();
+	        testEntityManager.persist(book1);
+
+	        book2 = Book.builder().title(BOOT_TEST_TITLE+"2").publishedAt(LocalDateTime.now()).build();
+	        testEntityManager.persist(book2);
+
+	        book3 = Book.builder().title(BOOT_TEST_TITLE+"3").publishedAt(LocalDateTime.now()).build();
+	        testEntityManager.persist(book3);
+	    }
+
+	    @Test
+	    public void SearchTest(){
+	        List<Book> bookList = bookRepository.findAll();
+	        MatcherAssert.assertThat(bookList, Matchers.hasSize(3));
+	        MatcherAssert.assertThat(bookList, Matchers.contains(book1,book2,book3));
+	    }
+
+	    @Test
+	    public void findByTitleTest(){
+	        List<Book> bookList = bookRepository.findByTitle(BOOT_TEST_TITLE+"1");
+	        MatcherAssert.assertThat(bookList, Matchers.contains(book1));
+	    }
+
+	    @Test
+	    public void findByIncludedFindAll(){
+	        List<Book> bookList = bookRepository.findByIncludedStr("Book1");
+	        MatcherAssert.assertThat(bookList, Matchers.hasSize(1));
+	    }
+
+	    @Test
+	    public void BookSaveAndDeleteTest(){
+	        bookRepository.deleteAll();
+	        MatcherAssert.assertThat(bookRepository.findAll(), IsEmptyCollection.empty());
+	    }
+	}
+
+
+
+	[설명]
+	<Book Class>
+		- @Entity 	: 객체를 정의하는 어노테이션
+		- @Table	: 맵핑되는 Table의 제약조건을 정의하는 어노테이션(name, uniqueConstraint, columnName 등)
+		- @id 		: 기본키 맵핑
+			* @GeneratedValue: AUTO_INCREMENT
+
+		- @Column 	: 각 필드에 맵핑되는 column 정의 어노테이션
+
+		* 기타 심화는 아래 Doc 참고
+
+	<BookRepository Class>
+		- extends JpaRepository<{entityClass}, {pkDataType}>
+			: 단순 프록시 설정에서 상속 받음으로써 기본적인 CRUD 동작 가능
+		- findByTitle
+			: 기본적인 CRUD이외에 관습적으로 사용되는
+				- findBy{columnName}
+				- countBy{columnName}
+			 을 통해 인터페이스 선언만으로 관련 기능을 사용할 수 있음
+
+			 * 이외에 And, Or 등등을 함께 포함하여 관습적으로 사용할 수 있으니, 아래 첨부된 Doc 참고!
+
+		- findByIncludedStr
+			: @Query 어노테이션을 활용하여 직접 쿼리를 자세히 정의하여 사용하는 JPA 함수
+				* table 이름을 명시하여야만 사용할 수 있는 듯하며, SQL 그대로 사용할 수도 있다. 아래 참고 블로그로 간단 예제 확인
+
+	<BookDataJpaTest Class>
+		- builder를 통한 entity 객체 생성
+		- di받은 repositry를 이용한 함수 호출 및 사용
+			* repositry는 Bean 등록을 통해 사용
+			* 현재 AutoConfiguration을 통해 임베디드 h2 db환경과 관련된 의존성을 주입받아 사용 (application.yml에서 관련 설정 몇 줄이면 해결, 디테일한 수정을 원할 경우 직접 의존성 설정)
+
+
+	* JPA 관련 상세 내용은 Doc 참고 : https://docs.spring.io/spring-data/jpa/docs/2.3.3.RELEASE/reference/html/#jpa.repositories
+	* 기본 설명은 해당 블로그 참고 : https://sundries-in-myidea.tistory.com/91
+

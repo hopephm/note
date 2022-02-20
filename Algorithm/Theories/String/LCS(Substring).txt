@@ -1,0 +1,13 @@
+>> LCS (Longest Common Substring)
+	: 두 수열 모두에 존재하는 연속된 부분 문자열 중 가장 긴 것을 찾음
+	: 알고리즘이라기 보단 문제에 가깝고 풀이 방법이 다양하다.
+	
+	[By DP]
+
+	[By SA]
+
+	[By LCP]
+
+	[By LCS]
+
+	

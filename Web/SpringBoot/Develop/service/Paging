@@ -1,0 +1,51 @@
+- Pageable 객체와, Page<> 객체를 통해 구현
+	>> Repository 객체에서 데이터 조회시, pageable 객체를 넘겨 줆으로써 간단하게 구현 가능
+
+	>> pageable의 구현체인 PageRequest 객체를 통해, 각 페이지에 대한 설정 가능
+
+	>> @PageableDefault 어노테이션을 통해 기타 설정 가능
+
+
+@Controller
+@RequestMapping("/board")
+public class BoardController {
+    private final BoardService boardService;
+
+    public BoardController(BoardService boardService){
+        this.boardService = boardService;
+    }
+
+    @GetMapping("/list")
+    public  String list(@PageableDefault Pageable pageable, Model model){
+        model.addAttribute("boardList", boardService.findBoardList(pageable));
+        return "/board/list";
+    }
+}
+
+
+
+
+@Service
+public class BoardService {
+    private final BoardRepository boardRepository;
+
+    public BoardService(BoardRepository boardRepository){
+        this.boardRepository = boardRepository;
+    }
+
+    public Page<Board> findBoardList(Pageable pageable){
+        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ?
+                0 : pageable.getPageNumber() - 1,
+                pageable.getPageSize()
+        );
+
+        return boardRepository.findAll(pageable);
+    }
+
+    public Board findBoardByIdx(Long idx){
+        return boardRepository.findById(idx).orElse(null);
+    }
+}
+
+
+

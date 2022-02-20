@@ -1,0 +1,20 @@
+<Spring Boot github>
+	: https://github.com/spring-projects/spring-boot
+
+
+<Spring Security>
+	: https://docs.spring.io/spring-security/site/docs/current/reference/html5/#oauth2login-sample-initial-setup
+
+	>> OAuth2
+		: https://docs.spring.io/spring-security/site/docs/current/reference/html5/#oauth2
+
+
+<Kakao api>
+	: https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#before-you-begin
+
+<facebook Login>
+	: https://developers.facebook.com/docs/graph-api/using-graph-api
+
+<google api>
+	: https://developers.google.com/identity/protocols/oauth2
+	

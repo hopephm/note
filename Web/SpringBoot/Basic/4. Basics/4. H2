@@ -1,0 +1,10 @@
+- H2 Database
+	>> 로컬, 테스트 환경에서 주로 사용
+	>> 관계형 DB
+
+	* Test용 embeded mem db 경로(jdbc url) : jdbc:h2:mem:testdb
+		> property의 path 에서 확인 가능
+
+	* http://h2database.com -> All Platforms -> os 별 실행파일 실행
+
+	* spring boot 에서는 auto configuration을 통해, 별도 설치 없이 인메모리 DB로 사용 가능 (테스트용)

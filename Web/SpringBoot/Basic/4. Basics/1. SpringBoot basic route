@@ -1,0 +1,23 @@
+
+< Spring Boot Project 기본경로 >
+
+	|- src
+		|----- main
+		|	 	|----- java
+		|		|		|----- com
+		|		|				|----- demo
+		|		|
+		|		|----- resources
+		|				|----- static
+		|				|----- templates
+		|
+		|----- test
+			 	|----- java
+						|----- com
+								|----- demo
+
+
+	* src/main/java				: 자바 소스 경로
+	* src/test/java				: 스프링 부트 테스트 코드 경로
+	* src/main/resources/static	: static파일 default경로 (css, js, img 등)
+	* src/main/resources/templates: thymeleaf, freemarker 및 서버사이드 템플릿 파일 경로

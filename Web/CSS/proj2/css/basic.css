@@ -1,0 +1,29 @@
+#box1{
+	width: 500px;
+	height: 500px;
+	border: solid 1px black;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.float_left{
+	float: left;
+}
+
+.float_right{
+	float: right;
+}
+
+#lf1{
+	width: 200px;
+	height: 200px;
+	text-align: center;
+	background-color: #ffff99;
+}
+
+#rf1{
+	width: 200px;
+	height: 200px;
+	text-align: center;
+	background-color: #bbbbff;
+}

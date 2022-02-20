@@ -1,0 +1,22 @@
+1. social key 발급
+	- 각 소셜별 client-id, secret
+
+2. 소셜별 auth property 설정
+	- application.yml: 각 클라이언트 필요 정보 셋팅
+	- Injection: AuthorizationCodeResourceDetails, ResourceServerProperties
+		를 통한 property 주입 with @ConfigurationProperties
+
+3. security 설정
+	- 접근 제한 및 권한 필터 설정
+
+4. 인증완료 후 session에 객체 등록
+	- 미등록 유저일 경우 db에 등록
+	- user authority 설정
+	- 세션에 유저 등록
+
+
+* 2.0에서는 filter설정과, 객체 주입 생략가능
+	- CommonOAuth2Provider와 security의 oauth2Login을 통해 알아서 해줌
+	- 다만,  미지원 소셜의 경우는 해당 소셜 api를 통해 알아서 설정하자. (clientRegistraion에 등록함으로써)
+
+ * 각 소셜별 api확인을 통해 필요한대로 커스텀해서  쓰자

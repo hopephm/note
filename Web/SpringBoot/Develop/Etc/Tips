@@ -1,0 +1,5 @@
+- Spring Boot는 따로 Tomcat을 설치하지 않아도 사용가능
+	* Not War, Just Jar
+
+- spring boot security filter
+	https://mangkyu.tistory.com/77

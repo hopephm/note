@@ -1,0 +1,22 @@
+[설치]
+sudo apt-get install git
+
+[유저설정]
+git config --global user.name {깃헙아이디}
+git config --global user.email {이메일}
+git config --global --list
+
+[저장소 동기화]
+git init					: 초기화
+git remote add origin {깃헙 저장소}		: 클라우드 저장소와 연결
+
+[ 업로드 ]
+git add .					: 작업내용 반영
+git commit -m "first commit"		: 커밋
+git push -u origin master			: 클라우드에 푸쉬
+
+[깃헙 저장소 복사]
+git clone {깃헙저장소 url}			: 깃 내용 복사
+
+[ 다운로드 ]
+git pull					: 업데이트

@@ -1,0 +1,68 @@
+앱 보안을 위한 설정
+	* 예제를 통해 알아보자
+
+
+	@Configuration
+	@EnableWebSecurity
+	public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+	    @Override
+	    protected void configure(HttpSecurity http) throws Exception {
+	        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+
+	        http
+	            .authorizeRequests()
+	                .antMatchers("/", "/login/**",  "/css/**", "/images/**", "/js/**", "/console/**").permitAll()
+	                .anyRequest().authenticated()
+	            .and()
+	                .headers().frameOptions().disable()
+	            .and()
+	                .exceptionHandling()
+	                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+	            .and()
+	                .formLogin()
+	                .successForwardUrl("/board/list")
+	            .and()
+	                .logout()
+	                .logoutUrl("/logout")
+	                .logoutSuccessUrl("/")
+	                .deleteCookies("JSESSIONID")
+	                .invalidateHttpSession(true)
+	            .and()
+	                .addFilterBefore(filter, CsrfFilter.class)
+	                .csrf().disable();
+	    }
+
+
+	<Annotation>
+		>> @EnableWebSecurity: 웹에서 시큐리티 기능을 사용, boot에서는 자동설정 적용
+
+	<Class>
+		>> WebSecurityConfigurerAdapter : 시큐리티 설정을 위해 상속받는 클래스, 하위 configure(HttpSecurity http) 메서드를 오버라이드 하여 시큐리티 설정
+
+		>> HttpSecurity: 시큐리티 설정을 위한 클래스 (builder 패턴)
+			- authorizeRequests(): 인증 메커니즘을 HttpServletRequest 기반으로 설정
+				* antMatchers(String s, ..): 요청패턴 정의(리스트형식)
+				* permitAll(): 누구나 접근 허용
+				* anyRequest(): 설정 이외의 요청
+				* authenticated(): 인증된 사용자만 요청가능
+			- headers(): 응답에 해당하는 header 설정
+				* frameOptionis().disable(): XframeOptionsHeaderWriter 설정 불가
+			- exceptionHandling(): 예외상황 처리
+				* authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint(String url)) : 비인가 사용자의 요청시 해당 url로 이동
+			- formLogin(): 로그인 관련 설정
+				* successForwardUrl(String url): 로그인 성공시 url로 이동
+			- logout(): 로그아웃 관련 설정
+				* logoutUrl(String url):로그아웃을 적용할 url
+				* logoutSuccessUrl(String url): 로그아웃 성공시 이동할 url
+				* deleteCookies(String cookieName,...): 로그아웃시 삭제할 쿠키
+				* invalidateHttpSession(bool): 설정 세션 무효화 여부
+			- addFilterBefore(filter, beforeFilter): 앞에 등록된 필터보다 먼저 수행될 필터 등
+			- csrf(): csrf 관련 설정 (위 예제는 비활성화)
+
+
+			* REFERENCE : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/builders/HttpSecurity.html#method.summary
+
+
+	- SecurityContextHoler: 시큐리티와 관련된 정보를 갖고있는 객체
+	- OAuth2Authentication: 인증과 관련된 정보를 갖는 객체 (SecurityConotextHolder.getContext().getAuthentication()을 통한 획득 가능)

@@ -1,0 +1,254 @@
+
+
+	[ Spring Boot 2.0 기준]
+
+
+    <Property>
+
+	--- application.yml ---
+
+	spring:
+		security:
+		    oauth2:
+		      client:
+		        registration:
+		          google:
+		            client-id:
+		            client-secret: 
+		          facebook:
+		            client-id:
+		            client-secret: 
+	custom:
+	  oauth2:
+	    kakao:
+	      client-id: 
+
+	>> security.oauth2.client.registration.{소셜명}으로 프로퍼티 등록 가능
+ 	>> kakao 같은 Spring에서 지원하지 않는 소셜은 OAuth2 API에서 제공하는 것처럼 사용 (custom property 등록)
+
+
+ 		-- 관련정보를 갖는 provider enum 객체 생성 -- 
+
+ 		public enum CustomOAuth2Provider {
+		    KAKAO {
+		        @Override
+		        public ClientRegistration.Builder getBuilder(String registrationId) {
+		            ClientRegistration.Builder builder = getBuilder(registrationId, ClientAuthenticationMethod.POST, DEFAULT_LOGIN_REDIRECT_URL);
+		            builder.scope("profile");
+		            builder.authorizationUri("https://kauth.kakao.com/oauth/authorize");
+		            builder.tokenUri("https://kauth.kakao.com/oauth/token");
+		            builder.userInfoUri("https://kapi.kakao.com/v1/user/me");
+		            builder.userNameAttributeName("id");
+		            builder.clientName("Kakao");
+		            return builder;
+		        }
+		    };
+
+		    private static final String DEFAULT_LOGIN_REDIRECT_URL = "{baseUrl}/login/oauth2/code/{registrationId}";
+
+		    protected final ClientRegistration.Builder getBuilder(String registrationId, ClientAuthenticationMethod method, String redirectUri) {
+		        ClientRegistration.Builder builder = ClientRegistration.withRegistrationId(registrationId);
+		        builder.clientAuthenticationMethod(method);
+		        builder.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE);
+		        builder.redirectUriTemplate(redirectUri);
+		        return builder;
+		    }
+
+		    public abstract ClientRegistration.Builder getBuilder(String registrationId);
+
+		}
+
+
+		-- security 설정 변경 -- 
+
+
+		@Configuration
+		@EnableWebSecurity
+		public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+			// /oauth2/** 경로에서 api가 인증 절차 진행, 모든 사용자에게 열어둠
+			// oauth2Login(), defaultSuccessUrl(), failureUrrl() 을 통해 관련설정 세팅 (filter가 필요없어짐)
+
+		    @Override
+		    protected void configure(HttpSecurity http) throws Exception {
+		        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+		        http
+		            .authorizeRequests()
+		                .antMatchers("/", "/oauth2/**", "/login/**",  "/css/**", "/images/**", "/js/**", "/console/**").permitAll()
+		                .antMatchers("/facebook").hasAuthority(FACEBOOK.getRoleType())
+		                .antMatchers("/google").hasAuthority(GOOGLE.getRoleType())
+		                .antMatchers("/kakao").hasAuthority(KAKAO.getRoleType())
+		                .anyRequest().authenticated()
+		            .and()
+		                .oauth2Login()
+		                .defaultSuccessUrl("/loginSuccess")
+		                .failureUrl("/loginFailure")
+		            .and()
+		                .headers().frameOptions().disable()
+		            .and()
+		                .exceptionHandling()
+		                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+		            .and()
+		                .formLogin()
+		                .successForwardUrl("/board/list")
+		            .and()
+		                .logout()
+		                .logoutUrl("/logout")
+		                .logoutSuccessUrl("/")
+		                .deleteCookies("JSESSIONID")
+		                .invalidateHttpSession(true)
+		            .and()
+		                .addFilterBefore(filter, CsrfFilter.class)
+		                .csrf().disable();
+		    }
+
+		    // 카카오 연동을 위해 clientRegistration에 등록
+		    // 관련정보 수동 설정 (facebook graph api)
+		    @Bean
+		    public ClientRegistrationRepository clientRegistrationRepository(OAuth2ClientProperties oAuth2ClientProperties, @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId) {
+		        List<ClientRegistration> registrations = oAuth2ClientProperties.getRegistration().keySet().stream()
+		                .map(client -> getRegistration(oAuth2ClientProperties, client))
+		                .filter(Objects::nonNull)
+		                .collect(Collectors.toList());
+
+		        registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao")
+		                .clientId(kakaoClientId)
+		                .clientSecret("test") //필요없는 값인데 null이면 실행이 안되도록 설정되어 있음
+		                .jwkSetUri("test") //필요없는 값인데 null이면 실행이 안되도록 설정되어 있음
+		                .build());
+
+		        return new InMemoryClientRegistrationRepository(registrations);
+		    }
+
+		    private ClientRegistration getRegistration(OAuth2ClientProperties clientProperties, String client) {
+		        if ("google".equals(client)) {
+		            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("google");
+		            return CommonOAuth2Provider.GOOGLE.getBuilder(client)
+		                    .clientId(registration.getClientId())
+		                    .clientSecret(registration.getClientSecret())
+		                    .scope("email", "profile")
+		                    .build();
+		        }
+		        if ("facebook".equals(client)) {
+		            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("facebook");
+		            return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
+		                    .clientId(registration.getClientId())
+		                    .clientSecret(registration.getClientSecret())
+		                    .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,link")
+		                    .scope("email")
+		                    .build();
+		        }
+		        return null;
+		    }
+		}
+
+
+
+		-- controller -- 
+
+		@Controller
+		public class LoginController {
+
+		    @GetMapping("/login")
+		    public String login() {
+		        return "login";
+		    }
+
+		    @GetMapping("/loginSuccess")
+		    public String loginComplete() {
+		        return "redirect:/board/list";
+		    }
+		}
+
+		>> oauth2Login() 으로 제공하기 때문에, 성공 url을 통합하여 기능 제공
+
+
+
+		-- 기본 요청 uri 변경 -- 
+
+		/oauth2/authorization/{socialName}
+
+
+
+		-- Resolver -- 
+
+		@Component
+		public class UserArgumentResolver implements HandlerMethodArgumentResolver {
+
+		    private UserRepository userRepository;
+
+		    public UserArgumentResolver(UserRepository userRepository) {
+		        this.userRepository = userRepository;
+		    }
+
+		    @Override
+		    public boolean supportsParameter(MethodParameter parameter) {
+		        return parameter.getParameterAnnotation(SocialUser.class) != null && parameter.getParameterType().equals(User.class);
+		    }
+
+		    @Override
+		    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+		        HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+		        User user = (User) session.getAttribute("user");
+		        return getUser(user, session);
+		    }
+
+		    private User getUser(User user, HttpSession session) {
+		        if(user == null) {
+		            try {
+		                OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+		                Map<String, Object> map = authentication.getPrincipal().getAttributes();
+		                User convertUser = convertUser(authentication.getAuthorizedClientRegistrationId(), map);
+
+		                user = userRepository.findByEmail(convertUser.getEmail());
+		                if (user == null) { user = userRepository.save(convertUser); }
+
+		                setRoleIfNotSame(user, authentication, map);
+		                session.setAttribute("user", user);
+		            } catch (ClassCastException e) {
+		                return user;
+		            }
+		        }
+		        return user;
+		    }
+
+		    private User convertUser(String authority, Map<String, Object> map) {
+		        if(FACEBOOK.isEquals(authority)) return getModernUser(FACEBOOK, map);
+		        else if(GOOGLE.isEquals(authority)) return getModernUser(GOOGLE, map);
+		        else if(KAKAO.isEquals(authority)) return getKaKaoUser(map);
+		        return null;
+		    }
+
+		    private User getModernUser(SocialType socialType, Map<String, Object> map) {
+		        return User.builder()
+		                .name(String.valueOf(map.get("name")))
+		                .email(String.valueOf(map.get("email")))
+		                .pincipal(String.valueOf(map.get("id")))
+		                .socialType(socialType)
+		                .createdDate(LocalDateTime.now())
+		                .build();
+		    }
+
+		    private User getKaKaoUser(Map<String, Object> map) {
+		        Map<String, String> propertyMap = (HashMap<String, String>) map.get("properties");
+		        return User.builder()
+		                .name(propertyMap.get("nickname"))
+		                .email(String.valueOf(map.get("kaccount_email")))
+		                .pincipal(String.valueOf(map.get("id")))
+		                .socialType(KAKAO)
+		                .createdDate(LocalDateTime.now())
+		                .build();
+		    }
+
+		    private void setRoleIfNotSame(User user, OAuth2AuthenticationToken authentication, Map<String, Object> map) {
+		        if(!authentication.getAuthorities().contains(new SimpleGrantedAuthority(user.getSocialType().getRoleType()))) {
+		            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(map, "N/A", AuthorityUtils.createAuthorityList(user.getSocialType().getRoleType())));
+		        }
+		    }
+		}
+
+		>> OAuth2Authentication.class == OAuth2AuthenticationToken.class
+		>> Map<String, String> -> Map<String, Object> (개인정보 획득 제공 방법 변경)
+
+		>> getAuthorities()를 통한 권한 확인
+			-> getAuthorizedClientRegistrationId()를 통한 권한 확인

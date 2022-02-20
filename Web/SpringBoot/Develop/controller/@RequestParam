@@ -1,0 +1,52 @@
+@Controller
+@RequestMapping("/param")
+public class ParamController {
+	
+	// 단일 파라미터
+	// 인자 paramName이 전달되지 않을 경우 Bad Request에러
+    @GetMapping({"/single"})
+    public String (
+    	@RequestParam("paramName") String paramName
+    ){
+      return "param";
+    }
+
+    // default value 파라미터
+    // 인자값이 전달되지 않아도 default로 name이 전달되며 동작
+    @GetMapping({"/single/default"})
+    public String (
+    	@RequestParam(value="paramName", defaultValue="name")
+    	String paramName
+    ){
+      return "param";
+    }
+
+    // 다중 파라미터
+    // 너무 많아질 경우 지저분해진다
+    @GetMapping({"/multi"})
+    public String (
+    	@RequestParam("param1") String param1,
+    	@RequestParam("param2") String param2
+    ){
+      return "param";
+    }
+
+    // 데이터 커맨드 활용
+    // 해당 객체에 선언된 멤버변수의 변수명을 통해 파라미터로 활용
+    // @ModelAttribute 어노테이션을 통해 class 이름 대신 약어로 활용 가능(jsp)
+    @GetMapping({"/data"})
+    public String (
+    	@ModelAttribute("param") SampleData data
+    ){
+      return "param";
+    }
+}
+
+// SampleData Class
+
+@Setter
+@Getter
+class SampleData{
+	String param1;
+	String param2;
+}

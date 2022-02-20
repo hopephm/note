@@ -1,0 +1,41 @@
+
+	< @WebMvcTest >
+
+		- MVC를 위한 테스트
+		- Web Test가 어려운 Controller Test에 적합
+		- Security, filter까지 자동 테스트 + 수동 추가 및 삭제 가능
+		- MVC관련 설정만 로드
+			>> @Controller, @ControllerAdvice, @JsonComponent와 Filter, @WebMvcConfigurer, HandlerMethodArgumetResolver만 로드
+
+
+	[예제]
+		
+	@WebMvcTest(BookController.class)
+	public class BookMvcTests {
+	    @Value("${property.test.value1}")
+	    private Integer val1;
+
+	    @Autowired
+	    private MockMvc mvc;
+
+		//    빈으로 등록된 BookService 대신 현재의 목오브젝트로 생성된 BookService를 DI 필요시 사용
+		//    현 상황에 맞는 정확한 테스트 가능
+	    @MockBean
+	    private BookService bookService;
+
+	    @Test
+	    public void mvcTest() throws Exception{
+	        Book book = new Book("Spring Boot Book", LocalDateTime.now());
+
+	        BDDMockito.given(bookService.getBookList()).willReturn(Collections.singletonList(book));
+
+	        mvc.perform(MockMvcRequestBuilders.get("/books"))
+	            .andExpect(MockMvcResultMatchers.status().isOk())
+	            .andExpect(MockMvcResultMatchers.view().name("book"))
+	            .andExpect(MockMvcResultMatchers.model().attributeExists("bookList"))
+	            .andExpect(MockMvcResultMatchers.model().attribute("bookList", Matchers.contains(book)));
+	    }
+	}
+
+
+	>> @MockBean 어노테이션을 통해 테스트용 bean을 생성, 주입을 통해 테스트

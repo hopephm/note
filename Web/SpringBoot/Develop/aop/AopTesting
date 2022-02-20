@@ -1,0 +1,41 @@
+>> Aspect를 테스트 할 때 실제 프로그램에서는 돌아가는데 Test시에는 돌아가지 않음.
+
+>> @import(AnnotationAwareAspectJAutoProxyCreator.class)
+		
+	
+   @SpnigBootTest
+   class SomeTest(){
+
+   	...
+   }
+
+	를 통해 테스팅 가능
+
+	* 그러나, 프록시 기반 모델이 다르다면 에러가 발생할 것임!
+		-- JDKDynamicProxy, CGLib
+
+
+AnnotationAwareAspectJAutoProxyCreator
+	: Aspect 어노테이션을 처리하는 서브클래스, Spring Advisor
+
+어떤 AspectJ 어노테이션이 달린 클래스를 자동 인식하고 
+Spring AOP의 프록시 기반 모델에 적용가능하다면 적용함
+	
+	>> AnnotationAwareAspectJAutoProxyCreator 를 통해 AspectJ를 테스팅할 때는
+		동적 프록시를 사용하므로 Aspect가 적용된 클래스들에 대해 
+		interface를 두어야 제대로 동작함
+
+		-- 인터페이스를 없이 바로 구체클래스에 적용할 일이 거의 없으므로 그냥 알아두기만 하자
+		-- 단순 테스팅 할 때 안돌아가서 당황했기 때문에...ㅠ
+
+
+
+------------------------------ 추가 -------------------------
+
+
+	위의 방법은 꼼수에 가깝고 그냥 지원해주는게 있다.
+	심지어 JDKDynamicProxy를 사용하지 않고 CGLib로 강제하는 옵션도 쉽게 설정 가능. 
+	이거쓰자.
+
+	@EnableAspectJAutoProxy(proxyTargetClass = true)
+	@SpringBootTest

@@ -1,0 +1,18 @@
+- openJdk8 다운로드
+
+- intellij idea 다운로드
+	>> JDK 설정:
+		file -> project structure -> platform setting -> sdks -> jdk 경로 지정
+			* https://www.jetbrains.com/help/idea/sdk.html
+
+	>> Auto Import 설정
+		file -> settings -> editor -> general -> auto import 
+		(optimize imports on the fly: 코드 변경시 자동 import)
+
+	>> 기타 intellij 사용방법 정보
+		* https://www.jetbrains.com/help/idea/
+
+	* 커뮤니티 버젼: js,ts,spring,sql 등 미지원...
+
+
+

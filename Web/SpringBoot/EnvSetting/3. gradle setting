@@ -1,0 +1,3 @@
+- gradle 설치
+	>> gradle.org/install
+		* 사실 intellij에서 open시 인식되었다면 자동설치

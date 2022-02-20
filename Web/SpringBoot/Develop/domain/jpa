@@ -1,0 +1,14 @@
+@Entity : DB Table과  1:1 매칭되는 객체 단위, 인스턴스1개=레코드1개
+		* 해당 클래스는 JPA가 관리
+	@Id		: pk
+	@GeneratedValue	: 값 자동 생성 (주로 pk에 범위가 크게 biginteger로)
+	@EmbeddedId : 복합키 구성
+	@Column	: column (default 생략가능)
+	@Transient	: 객체로서만 사용, db에 불필요
+	@Enumerated	: enum 형태 저장 (순서 or enum 값)
+
+@Table 	: 맵핑할 테이블 지정
+	- name		: 맵핑 테이블 이름
+	- catalog	: DB catalog 맵핑
+	- schema 	: DB schema 맵핑
+	- uniqueConstraint : DDL 쿼리 제약조건

@@ -1,0 +1,43 @@
+인증 상태 유지, 스프링에서는 spring session dependency와 해당 프로퍼티로 쉽게 활용
+
+
+서버 인증 방법
+	- 헤더를 통한 인증정보 전송
+		>> 보안이 몹시 취약
+		>> 요청마다 계정정보 검증 (비효율)
+		>> 테스트용으로 적합(개발단계)
+
+	- session, cookie 방식
+		[과정]
+			1. 로그인 요청
+			2. 계정정보 검증 및 사용자 session 생성, session ID 발급
+			3. 로그인 응답 (with session ID)
+			4. 인증이 필요한 정보 요청 (session ID in cookie)
+			5. cookie 확인 및 세션 저장소에서 해당 정보 응답
+
+		>> 세션저장소 필요(주로 redis), 서버부하 상승
+		>> 요청 자체에 정보 미존재, but 세션하이재킹 가능
+
+	- 토큰 기반 인증방식(JWT)
+		[과정]
+			1. 로그인 요청
+			2. 계정정보 검증 및 secret key를 통한 access token 발급
+			3. 로그인 응답 (with access token)
+			4. 인증 필요 정보 요청 (auth header에 access token 포함)
+			5. Signature 확인 후, payload 정보 응답
+
+		>> 세션 방식과 달리 세션저장소가 아닌 JWT안에 유저 정보 존재
+			* 인증을 위한 암호화
+		>> 쉽고 확장성이 큼
+		>> JWT 탈취 시, 유효기간 만료시 까지 계속 사용 가능
+			* 세션 방식의 경우 세션을 삭제하면 됨
+		>> JWT 크기에 따른 데이터 트래픽 크기에 영향
+
+
+
+		※ JWT란
+			>> Header, Payload, Verify Signature 로 구성
+				* Header: 토큰 타입, 해시 암호화 알고리즘
+				* Payload: 토큰에 담을 claim 정보
+					- registered claim, public claim, private claim
+				* Signature: secret 키를 포함, 암호화된 정보

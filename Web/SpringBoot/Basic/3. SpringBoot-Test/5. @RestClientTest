@@ -1,0 +1,49 @@
+- @RestClientTest
+	: Rest 관련 테스트
+
+	[예제]
+
+	<BookRestClientTest Class>
+
+	@RestClientTest
+	public class BookRestClientTest {
+	    @Autowired
+	    private BookRestService bookRestService;
+
+	    @Autowired
+	    private MockRestServiceServer server;
+
+	    @Test
+	    public void restTest(){
+	        this.server.expect(MockRestRequestMatchers.requestTo("/rest/test"))
+	                .andRespond(MockRestResponseCreators.withSuccess(new ClassPathResource("/json/test.json", getClass()), MediaType.APPLICATION_JSON));
+
+	        Book book = this.bookRestService.getRestBook();
+
+	        MatcherAssert.assertThat(book.getTitle(), Matchers.is("테스트"));
+	    }
+
+	    @Test
+	    public void restErrorTest(){
+	        this.server.expect(MockRestRequestMatchers.requestTo("/rest/test"))
+	                .andRespond(MockRestResponseCreators.withServerError());
+
+	        Assertions.assertThrows(HttpServerErrorException.class, () -> {
+	           this.bookRestService.getRestBook();
+	        });
+
+	    }
+	}
+
+	<resources/json/test.json>
+	{
+	  "idx": null,
+	  "title": "테스트",
+	  "publishedAt": null
+	}
+
+
+
+	>> @MockRestServiceServer를 통해 목 서버를 생성
+	>> server에 요청, 응답이 예상대로 진행되는지 테스트
+	>> 서버 에러 테스트는 asssertThrows를 통해 예상 예외와 람다식을 통해 테스트

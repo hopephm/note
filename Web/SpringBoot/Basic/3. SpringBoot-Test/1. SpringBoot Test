@@ -1,0 +1,15 @@
+- 스프링 부트는 기본적 테스트 스타터 제공
+
+	<포함 모듈>
+	>> spring-boot-test
+	>> spring-boot-test-autoconfigure
+
+	* 보통 spring-boot-starter-test로 두 모듈을 함께 사용
+
+
+- 테스트를 위한 어노테이션을 통해 특정 주제에 맞는 테스트 가능
+	>> @SpringBootTest 	: 통합 테스트 목적
+	>> @WebMvcTest		: MVC를 위한 테스트 (Web)
+	>> @DataJpaTest		: JPA관련 테스트 설정만 로드 (데이터소스, JPA활용 데이터 생성,수정,삭제)
+	>> @RestClientTest	: REST관련 테스트 (REST통신의 JSON 응답 반환 등)
+	>> @JsonTest		: Json관련 테스트 (Gson,Jackson테스트)

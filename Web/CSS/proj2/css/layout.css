@@ -1,0 +1,38 @@
+#wrap{
+	margin: 0 auto;
+	padding: 0 0 0 0;
+	width: 800px;
+}
+
+header{
+	width:800px;
+	height:200px;
+	background-color: #bbbbbb;
+}
+
+aside{
+	float: left;
+	width:200px;
+	height: 600px;
+	background-color: #ffff99;
+}
+
+section{
+	float: right;
+	width: 600px;
+	height: 600px;
+	background-color: #aaaaff;
+}
+
+footer{
+	clear: both;
+	width: 800px;
+	height: 200px;
+	background-color: #bbbbbb;
+}
+
+header, aside, section, footer{
+	text-align: center;
+	font-size: 20px;
+	padding-top: 10px;
+}

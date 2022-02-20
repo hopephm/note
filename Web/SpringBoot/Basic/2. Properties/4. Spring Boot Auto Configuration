@@ -1,0 +1,33 @@
+- Spring boot 자동 환경설정
+	>> 기존 Spring에서 의존성을 하나하나 Bean을 통해 수동으로 설정한 것에 반해, 스프링 부트는 관련 의존성을 '스타터' 라는 묶음으로 제공
+
+	>> @SpringBootApplication 또는
+	   @EnableAutoConfiguration 을 통해 가능
+
+
+
+	※ @SpringBootApplication
+		>> @SpringBootConfigutraion + @EnableAutoConfiguration + @ComponentScan 으로 구성
+
+		- @SpringBootConfiguration
+			: 스프링 부트 설정을 나타냄
+		- @EnableAutoConfiguration
+			: 자동 설정의 핵심 어노테이션, 클래스 경로 기반 설정 자동화
+		- @ComponentScan
+			: 특정 패키지 경로 기반 @Configuration에서 사용할 @Component 설정 클래스를 탐색, 기본적으로 @ComponentScan 위치 패키지가 BasePackage로 해석
+
+
+
+	※ @EnableAutoConfiguration
+		>> 자동설정 전체를 관장하는 주체
+
+		- spring-boot-autoconfigure-{version}.jar/META-INF/spring.factories : 자동설정 타깃 클래스 목록
+		- spring-boot-autoconfigure-{version}.jar/META-INF/spring-configuration-metadata.json: 자동설정에 사용할 프로퍼티 정의 파일
+		- org/springframework/boot/autoconfigure: 미리 구현한 저동설정 리스트
+
+		* 레퍼런스: https://docs.spring.io/spring-boot/docs/current/reference/html/
+
+
+ <결론>
+ 	- 일단은 자동설정 관련 옵션을 건드릴 수 있다는 것만 알아두자.
+ 	- 필요한 경우 옵션 제어만으로 이미 만들어진 빈을 활용할 수 있다.

@@ -1,0 +1,174 @@
+[예제]
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<meta charset="utf-8">
+			<link rel="stylesheet" type="text/css" href="mystyle.css">
+			<style>
+				h1{
+				font-family:"맑은고딕";
+				color:green;
+				}
+			</style>
+		</head>
+		<body>
+			<h1>제목은 초록색 입니다.</h1>
+			<p style="color:blue;">
+				이 단락은 파랑색 입니다.
+			</p>
+		</body>
+	</html>
+
+
+[css 코드의 정의]
+	- head 태그의 style 태그 안에 정의
+	- head 태그안에 링크 태그를 통해 외부 css 파일로 정의
+	- body 태그 안에서 각 태그에 style 속성으로 그때그때 정의
+
+
+[selector]
+	*			: 전체 선택자
+	p 			: p 태그 선택자
+	p, span		: p 태그와 span 태그 선택자
+	p span 		: p 태그 하위의 모든 span 태그 선택자
+	#title		: id 속성이 title인 태그 선택
+	.red_bold	: class 속성이 red_bold인 태그 선택
+
+		* ul:nth-child(2n-1) : ul 태그인 2n-1번째 요소에 적용
+
+
+[css 기본 문법]
+	[색상]
+		background-color	: 배경 색상	>> red, skyblue, #fa679d ...
+		color 				: 글자 색상					"
+
+	[글자 스타일]
+		text-align			: 글자 정렬		>>		left, center, right ...
+		line-height		: 줄간격			>>		100%, 200% ...
+
+		font-family		: 글자 폰트		>>		"맑은고딕", "돋움", "바탕" ...
+		font-size			: 글자 크기		>>		16px, 20px ...
+		font-weight		: 글자 두께		>>		bold, normal ...
+		font-style			: 글자 스타일		>>		italic ...
+
+		text-decoration	: 글자장식		>>		underline, none ...
+		text-shadow		: 글자 그림자		>>		3px 3px 5px #44444 ...
+													(r,l 길이, 투명도, color)
+		* 하이퍼링크 글자 
+			a:link 			: 링크의 기본상태
+			a:visited		: 한 번 이상 방문한 상태
+			a:hover			: 마우스 포인터를 올린 상태
+			a:active		: 마우스 클릭한 상태
+
+		* 웹 폰트 
+			- 웹 상에서 제공하는 폰트의 주소를 포함한 link 태그를 head에 정의 후 해당 이름으로 사용
+			- Ex) fonts.google.com 사이트에서 폰트 선택 후 링크 태그 복사 후 사용
+
+					<link rel="preconnect" href="https://fonts.gstatic.com">
+					<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@700&display=swap" rel="stylesheet">
+
+					p{ font-family: 'Nanum Gothic', sans-serif;}
+
+	[박스 모델]
+		margin				: 박스 모델 바깥의 여백	>>	10px, 30px ...
+			(margin-top,bottom,left,right)	
+
+		padding			: 박스 모델 안쪽의 여백	>>	10px, 30px ...
+			(padding-top,bottom,left,right)
+
+		border				: 박스 모델의 경계선		>>	solid, dotted, dashed ...
+			(border-top,bottom,left,right)			1px, 3px ...
+							  							red, #39f6ad ...
+			* margin과 padding은 연속으로 4개를 모두 적어 t,r,b,l 순으로 적용 가능
+
+		border-radius		: 박스 둥근 모서리		>>	20px, 30px ...
+		box-shadow			: 박스 그림자				>>	5px 5px 10px #888888
+														(r,l 길이, 투명도, color)
+
+
+[CSS 활용]
+	[배경 이미지]
+		background-image	: 배경을 해당 image로 변경	>>	url(./srcs/test.png) ...
+		background-repeat	: 배경을 반복					>>	no-repeat, repeat-x, repeat-y ...
+		background-position : 배경의 위치를 지정		>>	{left, right, center} {top, bottom, center} ...
+
+	[테이블]
+		border 				: 테이블의 각 경계선 				>>	박스 모델과 동일
+		width, height 		: 테이블의 너비, 높이				>>	250px, 100px ...
+		border-collapse	: 테이블의 경계선을 한 줄로 설정	>>	collapse ...
+
+	[목록]
+		list-style-type	: 글머리 기호		 			>>	square, circle, disc, none ...
+		list-style-image	: 글머리 기호					>>	url(./srcs/test.png) ...
+
+			* li{ display: inline; } 					>> 요소를 수평방향으로 설정
+
+	[디스플레이 방식]
+		display			: 요소의 디스플레이 방식을 결정		>>	inline, block, inline-block, none
+			* inline
+				- 수평방향 요소 배치, 개행 미 적용
+				- 박스 크기를 설정하는 width, height 속성 미 적용
+				- 상하단 마진 미적용
+
+			* block
+				- 해당 요소 앞 뒤에 자동 개행 (수직방향 요소 배치)
+				- 박스 크기 설정, 마진 설정 모두 가능
+
+			* inline-block
+				- 수평방향 요소 배치, 개행 미 적용
+				- 박스 크기 설정, 마진 설정 모두 가능
+
+			* none	: 비활성화 (안 보임)
+
+			* default
+				- inline : span, a, img, input, textarea, br, buttom, select, option, script ...
+				- block  : div, p, h1~h6, form, table, ul, ol, li, video, header, footer, section ...
+
+
+[Layout]
+	* 요소의 중앙배치
+		- 가로 중앙 배치
+			>> margin: 0 auto			:	요소 자체가 웹 페이지의 중앙에 배치
+			>> text-align: center	:	내부 텍스트뿐만 아니라 이미지, 오디오 등도 중앙에 위치
+		- 세로 중앙 배치
+			>> 
+
+	* 부유 요소
+		- float		:	겹치게 배치		>>		right, left ...
+			* 해당 요소 다음에 오는 요소는 float에 의해 가려지게 됨
+
+		- clear		:	이전에 사용된 float 속성을 해제 하여 새로운 줄에 배치		
+						>>		right, left, both ...
+
+	* 기본 레이아웃	:	float 속성을 통해 빈 공간이 없게 함 (margin 만으론 한계)
+		----------------------------------------------------------------------
+		|								header								 |
+		|																	 |
+		----------------------------------------------------------------------
+		|	side bar	|					main section					 |
+		|				|													 |
+		|				|													 |
+		|				|													 |
+		|				|													 |
+		|				|													 |
+		|				|													 |
+		|				|													 |
+		|				|													 |
+		|				|													 |
+		----------------------------------------------------------------------
+		|								footer								 |
+		|																	 |
+		----------------------------------------------------------------------
+
+	* 요소 위치 지정
+		- 상대 위치 지정	:	원래 있어야 하는 위치에서 특정 수치 만큼 이동 하여 배치
+			* position: relative;
+				>> left, right, top, bottom : 속성을 통해 위치 지정
+
+		- 절대 위치 지정	:	브라우저 좌상단 기준 특정 수치만큼 이동하여 배치
+			* position: absolute;
+				>> left, right, top, bottom : 속성을 통해 위치 지정
+
+		- 위치 고정		:	브라우저 스크롤이 내려가도 항상 해당 위치에 존재하도록 함
+			* position;: fixed;
+				>> left, right, top, bottom : 속성을 통해 위치 지정

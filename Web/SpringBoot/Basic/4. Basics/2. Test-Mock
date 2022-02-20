@@ -1,0 +1,55 @@
+- Mock Object
+	: 테스트용 임시 객체 ( 일종의 스텁을 위한 객체 )
+
+	[동작과정]
+		- 목 오브젝트 생성
+		- 상황별 리턴값 명시 
+		- 객체 등록 및 테스팅
+
+
+
+	[사용방법]
+	< mokito framework >
+		// Book book = new Book(...);
+
+			BookService bookService = Mockito.mock(BookService.class)
+
+		# 리턴값이 없다면 생략 가능
+			Mockito.when(bookService.getBookList()).thenReturn(Collections.singletonList(book));
+
+		# 사용
+			...
+
+
+	< spring Mock >
+		import static org.hamcrest.Matchers.contains;
+		import static org.mockito.BDDMockito.given;
+		import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+		import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+		@MockBean
+		private BookService bookService;
+
+		@Test
+		pulbic void test(){
+		// Book book = new Book(...);
+
+			given(bookService.getBookList()).willReturn(Collections.singletonList(book));
+
+		# 사용
+			mvc.perform(get("/books"))
+            	.andExpect(status().isOk())
+            	.andExpect(view().name("book"))
+            	.andExpect(model().attributeExists("bookList"))
+            	.andExpect(model().attribute("bookList", contains(book)));
+
+		}
+
+
+	* @MockBean은 Mock 오브젝트를 빈으로 등록함
+		>> 해당 Mock오브젝트를 의존성으로 필요로 할 시 자동 사용됨
+		>> 관련 의존성이 존재하지 않는다면 @Mock을 통해 좀 더 가볍고 집중된 테스트 가능
+
+
+
+	※ 위의 예제에서 BookController가 BookService를 DI 받아 사용하는데, Mock오브젝트를 Bean으로 등록하지 않고 테스트를 하면 Bean으로 등록된 다른 BookService 객체를 찾기 때문에 정상적인 테스트가 어렵다. 위와 같은 경우에는 반드시 mock obj를 bean으로 등록 사용하여야 한다

@@ -1,0 +1,12 @@
+@Controller 	: 해당 클래스를 Controller 로 사용 (bean 관리)
+
+@RequestMapping	: 해당 클래스의 url 지정, 클래스 메소드들은 해당 url 하위에서 접근 가능
+
+	@GetMapping	: Get요청
+	@PostMapping: Post 요청
+		>> value: url
+		>> consumes: request body type 제한
+		>> produces: response type 제한
+		>> header: request header 제한
+		   * 문자열 덧셈을 통한 조건 제한 가능(!, =)
+

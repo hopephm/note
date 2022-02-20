@@ -1,0 +1,6 @@
+- spring boot 프로젝트 생성
+	>> ide, spring-boot-cli , start.spring.io... 등등 알아서
+	>> default: dependencies 는 일단 web만...
+
+- intellij에서 spring boot 프로젝트 open
+	* 자동 gradle 인식, 프로젝트 시작
