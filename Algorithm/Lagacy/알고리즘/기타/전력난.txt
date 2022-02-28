@@ -1,0 +1,103 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+typedef struct edge {
+	int weight;
+	int v1;
+	int v2;
+    	edge() {}
+	edge(int w, int vertex1, int vertex2) {
+		this->weight = w;
+		this->v1 = vertex1;
+		this->v2 = vertex2;
+	}
+	bool operator < (const edge &b) const {
+		return this->weight < b.weight;
+	}
+}edge;
+
+int Ancestor[200000];
+
+bool setAncestor(int v1, int v2) {	//대표 정점 비교해서 더 큰 쪽의 대표 정점의 대표정점을 작은 쪽으로 갱신
+	if (v1 > v2) {
+		Ancestor[v1] = v2;
+		return true;
+	}
+	Ancestor[v2] = v1;	
+	return false;
+}
+
+bool findAncestor(int v1, int v2) {	//간선을 구성하는 정점 두 개 입력 받아서
+				//다른 집합이면 merge, 같은 집합이면 false 반환
+	int a1 = v1, a2 = v2;
+	int optimazation;
+
+	while (Ancestor[a1] != a1)	a1 = Ancestor[a1];	//v1의 대표 정점 검색
+	while (Ancestor[a2] != a2)	a2 = Ancestor[a2];	//v2의 대표 정점 검색
+
+	if (a1 == a2) return false;	//같으면 같은 집합 (간선을 선택하지 않음)
+
+	if (setAncestor(a1, a2))	a1 = a2;	//더 큰 쪽을 작은 쪽으로 갱신
+	else a2 = a1;
+
+	while (Ancestor[v1] != a1) {	//v1에서 대표 정점 까지의 경로상에 있는 정점들 모두 부모 정점을 대표 정점으로
+				//(다음 검색 시 1계단만에 대표 정점 검색 가능하게 함)
+		optimazation = v1;
+		v1 = Ancestor[v1];
+		Ancestor[optimazation] = a1;
+	}
+	while (Ancestor[v2] != a2) {	//위와 동일
+		optimazation = v2;
+		v2 = Ancestor[v2];
+		Ancestor[optimazation] = a2;
+	}
+
+	return true;
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	while (1) {
+		unsigned int sum = 0;
+
+		int m, n, count = 0;
+
+		cin >> m >> n;
+		vector<edge> e(n);
+
+		if (m == 0 && n == 0) return 0;
+
+		for (int i = 0; i < m; i++)	//모든 정점의 대표 정점을 자기 자신으로 초기화
+			Ancestor[i] = i;
+
+		for (int i = 0; i < n; i++) {
+			int v1, v2, weight;
+			cin >> v1 >> v2 >> weight;
+			e[i].v1 = v1;
+			e[i].v2 = v2;
+			e[i].weight=weight;
+			sum += weight;	//모든 간선 가중치의 합
+		}
+
+		sort(e.begin(), e.end());	//간선들을 가중치를 기준으로 정렬
+		int i = 0;
+		while (count!=(m-1)) {	//m-1개의 간선이 선택 될 때 까지
+			edge tmp = e[i];
+			
+			if (findAncestor(tmp.v1, tmp.v2)) {
+				sum -= tmp.weight;	//선택 된 간선의 가중치를 뺌
+				count++;	
+			}
+			i++;
+		}
+
+		cout << sum << endl;
+		e.clear();		//벡터 초기화 안하면 메모리 초과
+	}
+	return 0;
+}
