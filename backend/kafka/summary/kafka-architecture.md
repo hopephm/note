@@ -88,8 +88,6 @@ Orders-1/               ← 파티션 1 (팔로워)
 
 ## Producer/Consumer
 
----
-
 ### Producer
 - 카프카 클러스터로 데이터를 전송하는 주체
 
